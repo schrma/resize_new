@@ -1,0 +1,22 @@
+[[source]]
+url = "https://pypi.org/simple"
+verify_ssl = true
+name = "pypi"
+
+[packages]
+opencv-contrib-python = "*"
+
+[dev-packages]
+black = "*"
+isort = "*"
+pytest = "*"
+pytest-cov = "*"
+pytest-xdist = "*"
+pylint = "*"
+tox = "*"
+tox-wheel = "*"
+flake8 = "*"
+pyproject-flake8 = "*"
+
+[requires]
+python_version = "3.8"
