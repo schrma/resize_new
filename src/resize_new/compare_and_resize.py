@@ -26,7 +26,10 @@ def folder_exists(folder):
 
 
 def redefine_src_album_folder(src_album_folder):
-    redefined_name = src_album_folder
+    if os.path.split(src_album_folder)[1].lower() == "jpg":
+        redefined_name = os.path.split(src_album_folder)[0]
+    else:
+        redefined_name = src_album_folder
     return redefined_name
 
 
