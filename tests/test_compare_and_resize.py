@@ -6,6 +6,23 @@ import resize_new
 import resize_new.compare_and_resize
 
 
+# https://stackoverflow.com/questions/70543525/pytest-how-to-create-and-read-a-file-inside-a-test
+@pytest.fixture
+def output_file(tmp_path):
+    # create your file manually here using the tmp_path fixture
+    # or just import a static pre-built mock file
+    # something like :
+    target_output = os.path.join(tmp_path, "mydoc.csv")
+    with open(target_output, "w+"):
+        pass
+    return target_output
+
+
+def test_function_second(output_file):
+    # with open(output_file) as ...
+    pass
+
+
 def test___get_all_folders___test_folder_input___number_of_directories(test_folder):
     folders = resize_new.compare_and_resize.get_all_folders(test_folder.input)
 
@@ -108,6 +125,10 @@ def test___get_dst_photo_filename___examples___correct_filename(
     dst_filename = resize_new.compare_and_resize.get_dst_photo_filename(photo_filename, dst_folder)
 
     assert dst_filename == expected_dst_filename
+
+    # def test___file_has_to_be_resized(tmpdir):
+    #     src_photo =
+    has_to_be_resized = resize_new.compare_and_resize.file_has_to_be_resized(src_photo, dst_photo)
 
 
 # def test___check_compare_and_resize___with_default_structure___expect_no_error(test_folder):

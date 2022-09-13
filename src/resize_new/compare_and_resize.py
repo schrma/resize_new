@@ -10,6 +10,12 @@ class SrcDstFolder:
     dst: str
 
 
+@dataclasses.dataclass
+class ResizeInfo:
+    src: str
+    dst: str
+
+
 def get_all_folders(folder):
     all_folders = [x[0] for x in os.walk(folder)]
     return all_folders
@@ -65,11 +71,13 @@ def find_new_photos(
 
 def resize_and_copy_if_new(src_album_folder: str, src_dst_folder: SrcDstFolder):
     src_photos = get_all_photos_from_folder(src_album_folder)
-
+    files_to_resize = []
     for src_photo in src_photos:
         dst_photo = get_dst_photo_filename(src_photo, src_dst_folder)
         if file_has_to_be_resized(src_photo, dst_photo):
-            resize_photo_to_dst_folder(src_photo, dst_photo)
+            resize_info_single_item = ResizeInfo(src_photo, dst_photo)
+            files_to_resize.append(resize_info_single_item)
+    return files_to_resize
 
 
 def resize_photo_to_dst_folder(src_photo, dst_photo):
