@@ -1,6 +1,13 @@
+import dataclasses
 import os
 
 import swissarmyknife.file_handling
+
+
+@dataclasses.dataclass
+class SrcDstFolder:
+    src: str
+    dst: str
 
 
 def get_all_folders(folder):
@@ -13,12 +20,17 @@ def get_all_photos_from_folder(folder):
     return all_photos
 
 
-def folder_exists_in_dst(src_album_folder, dst_folder):
+def folder_exists_in_dst(src_album_folder, src_dst_folder: SrcDstFolder):
     return True
 
 
-def get_dst_folder_out_of_src_folder(src_album_folder, dst_folder):
-    return "dst_folder"
+def get_dst_folder_out_of_src_folder(src_album_folder, src_dst_folder: SrcDstFolder):
+    prefix = os.path.commonprefix([src_dst_folder.src, src_album_folder])
+    folder_to_add_dst = src_album_folder.replace(prefix, "")
+    if folder_to_add_dst.startswith("\\"):
+        folder_to_add_dst = folder_to_add_dst[1::]
+    full_dst_folder = os.path.join(src_dst_folder.dst, folder_to_add_dst)
+    return full_dst_folder
 
 
 def folder_exists(folder):
@@ -42,10 +54,13 @@ def find_new_photos(
 
 
 def get_photos_to_resize(src_album_folder, dst_folder):
+    src_photos = get_all_photos_from_folder(src_album_folder)
+    if not src_photos:
+        return []
     redefined_src_album_folder = redefine_src_album_folder(src_album_folder)
     dst_folder = get_dst_folder_out_of_src_folder(redefined_src_album_folder, dst_folder)
     dst_photos = []
-    src_photos = get_all_photos_from_folder(src_album_folder)
+
     if folder_exists(dst_folder):
         dst_photos = get_all_photos_from_folder(redefined_src_album_folder)
     photo_data_to_resize = find_new_photos(src_photos, dst_photos)

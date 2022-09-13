@@ -2,6 +2,7 @@ import os
 
 import pytest
 
+import resize_new
 import resize_new.compare_and_resize
 
 
@@ -43,5 +44,38 @@ def test___redefine_src_album_folder___folders___correct_redefinition(
     assert redefined_name == expected_redefined_name
 
 
+@pytest.mark.parametrize(
+    ("folder", "dst_folder", "expected_folder"),
+    (
+        pytest.param(
+            "/root/src/2022/2022_01",
+            resize_new.compare_and_resize.SrcDstFolder("/root/src/", "/root/dst/"),
+            "/root/dst/2022/2022_01",
+            id="Test One",
+        ),
+        pytest.param(
+            r"D:\00-data\src\2022",
+            resize_new.compare_and_resize.SrcDstFolder(r"D:\00-data\src", r"D:\00-data\dst"),
+            r"D:\00-data\dst\2022",
+            id="Test One",
+        ),
+        pytest.param(
+            r"D:\00-data\src\2022",
+            resize_new.compare_and_resize.SrcDstFolder(r"D:\00-data\src", r"F:\10-data\dst"),
+            r"F:\10-data\dst\2022",
+            id="Test One",
+        ),
+    ),
+)
+def test___get_dst_folder_out_of_src_folder___folders___correct_folder(
+    folder, dst_folder, expected_folder
+):
+    full_dst_folder = resize_new.compare_and_resize.get_dst_folder_out_of_src_folder(
+        folder, dst_folder
+    )
+
+    assert full_dst_folder == expected_folder
+
+
 def test___check_compare_and_resize___with_default_structure___expect_no_error(test_folder):
-    resize_new.compare_and_resize.compare_and_resize(test_folder.input, test_folder.output)
+    pass
