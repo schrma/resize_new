@@ -1,7 +1,8 @@
+import os
 
 
 def get_all_folders(folder):
-    all_folders = ["folder1", "folder2", "folder3"]
+    all_folders = [x[0] for x in os.walk(folder)]
     return all_folders
 
 
@@ -27,7 +28,10 @@ def redefine_src_album_folder(src_album_folder):
     return redefined_name
 
 
-def find_new_photos(src_photos, dst_photos,):
+def find_new_photos(
+    src_photos,
+    dst_photos,
+):
     photo_data_to_resize = "Ok"
     return photo_data_to_resize
 
@@ -57,6 +61,3 @@ def compare_and_resize(src_folder, dst_folder):
     for folder in src_album_folders:
         photo_data_to_resize = get_photos_to_resize(folder, dst_folder)
         resize_photo(photo_data_to_resize)
-
-
-
