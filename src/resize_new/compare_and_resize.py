@@ -1,5 +1,7 @@
 import os
 
+import swissarmyknife.file_handling
+
 
 def get_all_folders(folder):
     all_folders = [x[0] for x in os.walk(folder)]
@@ -7,7 +9,7 @@ def get_all_folders(folder):
 
 
 def get_all_photos_from_folder(folder):
-    all_photos = ["Foto1", "Foto2"]
+    all_photos = swissarmyknife.file_handling.get_all_files_from_folder(folder, ".jpg")
     return all_photos
 
 
