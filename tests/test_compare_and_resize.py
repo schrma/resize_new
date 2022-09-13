@@ -39,7 +39,7 @@ def test___get_all_photos_form_folder___test_folder_input___number_of_files(
 def test___redefine_src_album_folder___folders___correct_redefinition(
     folder, expected_redefined_name
 ):
-    redefined_name = resize_new.compare_and_resize.redefine_src_album_folder(folder)
+    redefined_name = resize_new.compare_and_resize.remove_jpg_folder_for_dst(folder)
 
     assert redefined_name == expected_redefined_name
 
@@ -67,15 +67,49 @@ def test___redefine_src_album_folder___folders___correct_redefinition(
         ),
     ),
 )
-def test___get_dst_folder_out_of_src_folder___folders___correct_folder(
-    folder, dst_folder, expected_folder
-):
-    full_dst_folder = resize_new.compare_and_resize.get_dst_folder_out_of_src_folder(
-        folder, dst_folder
-    )
+def test___convert_to_dst_folder___folders___correct_folder(folder, dst_folder, expected_folder):
+    full_dst_folder = resize_new.compare_and_resize.convert_to_dst_folder(folder, dst_folder)
 
     assert full_dst_folder == expected_folder
 
 
-def test___check_compare_and_resize___with_default_structure___expect_no_error(test_folder):
-    pass
+@pytest.mark.parametrize(
+    ("photo_filename", "dst_folder", "expected_dst_filename"),
+    (
+        pytest.param(
+            "/root/src/2022/2022_01/jpg/test.jpg",
+            resize_new.compare_and_resize.SrcDstFolder("/root/src/", "/root/dst/"),
+            "/root/dst/2022/2022_01/test.jpg",
+            id="Test linux with jpg folder",
+        ),
+        pytest.param(
+            "/root/src/2022/2022_01/test.jpg",
+            resize_new.compare_and_resize.SrcDstFolder("/root/src/", "/root/dst/"),
+            "/root/dst/2022/2022_01/test.jpg",
+            id="Test linux without jpg folder",
+        ),
+        pytest.param(
+            r"D:\00-data\src\2022/jpg/test.jpg",
+            resize_new.compare_and_resize.SrcDstFolder(r"D:\00-data\src", r"D:\00-data\dst"),
+            r"D:\00-data\dst\2022/test.jpg",
+            id="Test Windows with jpg folder",
+        ),
+        pytest.param(
+            r"D:\00-data\src\2022/test.jpg",
+            resize_new.compare_and_resize.SrcDstFolder(r"D:\00-data\src", r"D:\00-data\dst"),
+            r"D:\00-data\dst\2022/test.jpg",
+            id="Test Windows without jpg folder",
+        ),
+    ),
+)
+def test___get_dst_photo_filename___examples___correct_filename(
+    photo_filename, dst_folder, expected_dst_filename
+):
+    dst_filename = resize_new.compare_and_resize.get_dst_photo_filename(photo_filename, dst_folder)
+
+    assert dst_filename == expected_dst_filename
+
+
+# def test___check_compare_and_resize___with_default_structure___expect_no_error(test_folder):
+#     src_dst_folder = resize_new.compare_and_resize.SrcDstFolder(test_folder.input, test_folder.output)
+#     resize_new.compare_and_resize.compare_and_resize(src_dst_folder)
