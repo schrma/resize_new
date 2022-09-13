@@ -47,11 +47,27 @@ def remove_jpg_folder_for_dst(src_album_folder):
     return redefined_name
 
 
-def file_has_to_be_resized(src_photo, dst_photo):
+def dst_photo_is_older(src_photo, dst_photo):
+    if os.path.exists(dst_photo):
+        dst_older_than_src_in_seconds = os.stat(src_photo).st_mtime - os.stat(dst_photo).st_mtime
+        print(dst_older_than_src_in_seconds)
+        if dst_older_than_src_in_seconds > 0:
+            return True
+    return False
+
+
+def dst_photo_does_not_exist(dst_photo):
     if os.path.exists(dst_photo):
         return False
     else:
         return True
+
+
+def file_has_to_be_resized(src_photo, dst_photo):
+    if dst_photo_does_not_exist(dst_photo) or dst_photo_is_older(src_photo, dst_photo):
+        return True
+    else:
+        return False
 
 
 def get_dst_photo_filename(photo, src_dst_folder: SrcDstFolder):

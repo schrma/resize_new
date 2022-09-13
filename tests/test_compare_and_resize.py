@@ -1,4 +1,5 @@
 import os
+import time
 
 import pytest
 
@@ -6,21 +7,12 @@ import resize_new
 import resize_new.compare_and_resize
 
 
-# https://stackoverflow.com/questions/70543525/pytest-how-to-create-and-read-a-file-inside-a-test
-@pytest.fixture
-def output_file(tmp_path):
-    # create your file manually here using the tmp_path fixture
-    # or just import a static pre-built mock file
-    # something like :
-    target_output = os.path.join(tmp_path, "mydoc.csv")
+def create_temporary_file(tmp_path, filename):
+    os.mkdir(tmp_path)
+    target_output = os.path.join(tmp_path, filename)
     with open(target_output, "w+"):
         pass
     return target_output
-
-
-def test_function_second(output_file):
-    # with open(output_file) as ...
-    pass
 
 
 def test___get_all_folders___test_folder_input___number_of_directories(test_folder):
@@ -126,9 +118,54 @@ def test___get_dst_photo_filename___examples___correct_filename(
 
     assert dst_filename == expected_dst_filename
 
-    # def test___file_has_to_be_resized(tmpdir):
-    #     src_photo =
+
+def test___dst_photo_is_older___created_files___is_older(tmp_path):
+    dst_photo = create_temporary_file(os.path.join(tmp_path, "dst"), "test.jpg")
+    time.sleep(1)
+    src_photo = create_temporary_file(os.path.join(tmp_path, "src"), "test.jpg")
+
+    dst_is_older = resize_new.compare_and_resize.dst_photo_is_older(src_photo, dst_photo)
+
+    assert dst_is_older
+
+
+def test___dst_photo_is_older___created_files___is_newer(tmp_path):
+    src_photo = create_temporary_file(os.path.join(tmp_path, "src"), "test.jpg")
+    time.sleep(1)
+    dst_photo = create_temporary_file(os.path.join(tmp_path, "dst"), "test.jpg")
+
+    dst_is_older = resize_new.compare_and_resize.dst_photo_is_older(src_photo, dst_photo)
+
+    assert not dst_is_older
+
+
+def test___file_has_to_be_resized___src_is_newer___resize(tmp_path):
+    dst_photo = create_temporary_file(os.path.join(tmp_path, "dst"), "test.jpg")
+    time.sleep(1)
+    src_photo = create_temporary_file(os.path.join(tmp_path, "src"), "test.jpg")
+
     has_to_be_resized = resize_new.compare_and_resize.file_has_to_be_resized(src_photo, dst_photo)
+
+    assert has_to_be_resized
+
+
+def test___file_has_to_be_resized___dst_not_existing___resize(tmp_path):
+    src_photo = create_temporary_file(os.path.join(tmp_path, "src"), "test.jpg")
+    dst_photo = "test.jpg"
+
+    has_to_be_resized = resize_new.compare_and_resize.file_has_to_be_resized(src_photo, dst_photo)
+
+    assert has_to_be_resized
+
+
+def test___file_has_to_be_resized___dst_newer___no_resize(tmp_path):
+    src_photo = create_temporary_file(os.path.join(tmp_path, "src"), "test.jpg")
+    time.sleep(1)
+    dst_photo = create_temporary_file(os.path.join(tmp_path, "dst"), "test.jpg")
+
+    has_to_be_resized = resize_new.compare_and_resize.file_has_to_be_resized(src_photo, dst_photo)
+
+    assert not has_to_be_resized
 
 
 # def test___check_compare_and_resize___with_default_structure___expect_no_error(test_folder):
