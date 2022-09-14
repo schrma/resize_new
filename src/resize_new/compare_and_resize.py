@@ -3,6 +3,7 @@ import os
 import sys
 
 import cv2
+import pyexiv2
 import swissarmyknife.file_handling
 from loguru import logger
 
@@ -111,12 +112,15 @@ def check_if_file_was_loaded(image):
 def resize_photo(src_photo, dst_photo, max_target=1920):
     image = cv2.imread(src_photo, cv2.IMREAD_UNCHANGED)
 
+    with pyexiv2.Image(src_photo) as img:
+        metadata_exif = img.read_exif()
+        # metadata_xmp = img.read_xmp()
     try:
         check_if_file_was_loaded(image)
     except FileNotFoundError as exception:
         raise FileNotFoundError(src_photo + " not found") from exception
 
-    width_org, height_org = image.shape[:2]
+    height_org, width_org = image.shape[:2]
 
     width_target, height_target = calculate_target_size(width_org, height_org, max_target)
 
@@ -126,7 +130,12 @@ def resize_photo(src_photo, dst_photo, max_target=1920):
     # resize image
     output = cv2.resize(image, dsize)
 
+    os.makedirs(os.path.dirname(dst_photo), exist_ok=True)
+
     cv2.imwrite(dst_photo, output)
+
+    with pyexiv2.Image(dst_photo) as img:
+        img.modify_exif(metadata_exif)
 
 
 def calculate_target_size(width_org, height_org, max_target=1920):
@@ -149,4 +158,6 @@ def compare_and_resize(src_dst_folder):
 
     for folder in src_album_folders:
         logger.info(folder)
-        resize_and_copy_if_new(folder, src_dst_folder)
+        files_to_resize = resize_and_copy_if_new(folder, src_dst_folder)
+        for item in files_to_resize:
+            resize_photo(item.src, item.dst)

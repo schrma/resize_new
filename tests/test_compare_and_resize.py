@@ -209,3 +209,10 @@ def test___resize_photo___photo___size_reduced(test_folder):
     src_photo = os.path.join(test_folder.input, "2022/2022_02/foto2_2.JPG")
     dst_photo = os.path.join(test_folder.output, "test1.jpg")
     resize_new.compare_and_resize.resize_photo(src_photo, dst_photo)
+
+
+def test___compare_and_resize___input_folder___golden_run(test_folder):
+    src_dst_folder = resize_new.compare_and_resize.SrcDstFolder(
+        test_folder.input, test_folder.output
+    )
+    resize_new.compare_and_resize.compare_and_resize(src_dst_folder)
