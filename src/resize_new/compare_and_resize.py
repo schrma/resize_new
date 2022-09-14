@@ -66,15 +66,11 @@ def dst_photo_is_older(src_photo, dst_photo):
 def dst_photo_does_not_exist(dst_photo):
     if os.path.exists(dst_photo):
         return False
-    else:
-        return True
+    return True
 
 
 def file_has_to_be_resized(src_photo, dst_photo):
-    if dst_photo_does_not_exist(dst_photo) or dst_photo_is_older(src_photo, dst_photo):
-        return True
-    else:
-        return False
+    return bool(dst_photo_does_not_exist(dst_photo) or dst_photo_is_older(src_photo, dst_photo))
 
 
 def get_dst_photo_filename(photo, src_dst_folder: SrcDstFolder):
@@ -108,8 +104,8 @@ def resize_and_copy_if_new(src_album_folder: str, src_dst_folder: SrcDstFolder):
 def check_if_file_was_loaded(image):
     try:
         image_size = image.size  # noqa
-    except AttributeError:
-        raise FileNotFoundError
+    except AttributeError as exception:
+        raise FileNotFoundError from exception
 
 
 def resize_photo(src_photo, dst_photo, max_target=1920):
@@ -117,12 +113,12 @@ def resize_photo(src_photo, dst_photo, max_target=1920):
 
     try:
         check_if_file_was_loaded(image)
-    except FileNotFoundError:
-        raise FileNotFoundError(src_photo + " not found")
+    except FileNotFoundError as exception:
+        raise FileNotFoundError(src_photo + " not found") from exception
 
     width_org, height_org = image.shape[:2]
 
-    width_target, height_target = calculate_target_size(height_org, max_target, width_org)
+    width_target, height_target = calculate_target_size(width_org, height_org, max_target)
 
     # dsize
     dsize = (width_target, height_target)

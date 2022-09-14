@@ -10,7 +10,7 @@ import resize_new.compare_and_resize
 def create_temporary_file(tmp_path, filename):
     os.makedirs(tmp_path, exist_ok=True)
     target_output = os.path.join(tmp_path, filename)
-    with open(target_output, "w+"):
+    with open(target_output, "w+", encoding="utf-8"):
         pass
     return target_output
 
