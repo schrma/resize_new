@@ -182,3 +182,30 @@ def test___resize_and_copy_if_new___example_folder___correct_files(tmp_path):
     assert files_to_resize[1].src.replace("/", "\\") == src_photo2
     assert files_to_resize[0].dst == src_dst_folder.dst + "/" + "test1.jpg"
     assert files_to_resize[1].dst == src_dst_folder.dst + "/" + "test2.jpg"
+
+
+@pytest.mark.parametrize(
+    ("width_org", "height_org", "width_target", "height_target"),
+    (
+        pytest.param(3840, 1000, 1920, 500, id="Width is bigger"),
+        pytest.param(1000, 3840, 500, 1920, id="Height is bigger"),
+        pytest.param(1920, 1000, 1920, 1000, id="Boarder width"),
+        pytest.param(1000, 1920, 1000, 1920, id="Boarder height"),
+        pytest.param(1000, 1500, 1000, 1500, id="Width and height smaller than max_target"),
+    ),
+)
+def test___calculate_target_size___numbers___target_size(
+    width_org, height_org, width_target, height_target
+):
+    width_calculated, height_calculated = resize_new.compare_and_resize.calculate_target_size(
+        width_org, height_org
+    )
+
+    assert width_calculated == width_target
+    assert height_calculated == height_target
+
+
+def test___resize_photo___photo___size_reduced(test_folder):
+    src_photo = os.path.join(test_folder.input, "2022/2022_02/foto2_2.JPG")
+    dst_photo = os.path.join(test_folder.output, "test1.jpg")
+    resize_new.compare_and_resize.resize_photo(src_photo, dst_photo)

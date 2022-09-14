@@ -2,6 +2,7 @@ import dataclasses
 import os
 import sys
 
+import cv2
 import swissarmyknife.file_handling
 from loguru import logger
 
@@ -104,9 +105,47 @@ def resize_and_copy_if_new(src_album_folder: str, src_dst_folder: SrcDstFolder):
     return files_to_resize
 
 
-def resize_photo_to_dst_folder(src_photo, dst_photo):
-    print("Src: " + src_photo)
-    print("Dst: " + dst_photo)
+def check_if_file_was_loaded(image):
+    try:
+        image_size = image.size  # noqa
+    except AttributeError:
+        raise FileNotFoundError
+
+
+def resize_photo(src_photo, dst_photo, max_target=1920):
+    image = cv2.imread(src_photo, cv2.IMREAD_UNCHANGED)
+
+    try:
+        check_if_file_was_loaded(image)
+    except FileNotFoundError:
+        raise FileNotFoundError(src_photo + " not found")
+
+    width_org, height_org = image.shape[:2]
+
+    width_target, height_target = calculate_target_size(height_org, max_target, width_org)
+
+    # dsize
+    dsize = (width_target, height_target)
+
+    # resize image
+    output = cv2.resize(image, dsize)
+
+    cv2.imwrite(dst_photo, output)
+
+
+def calculate_target_size(width_org, height_org, max_target=1920):
+    if width_org > height_org:
+        scale = float(max_target) / width_org
+        width_target = max_target
+        height_target = height_org * scale
+    else:
+        scale = float(max_target) / height_org
+        height_target = max_target
+        width_target = width_org * scale
+    if scale > 1:
+        width_target = width_org
+        height_target = height_org
+    return int(width_target), int(height_target)
 
 
 def compare_and_resize(src_dst_folder):
