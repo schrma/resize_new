@@ -1,7 +1,13 @@
 import dataclasses
 import os
+import sys
 
 import swissarmyknife.file_handling
+from loguru import logger
+
+LOGGER_FORMAT = "{time} | {level} | {module} | {function} | {message}"
+logger.remove()
+logger.add(sys.stdout, format=LOGGER_FORMAT, level="INFO")
 
 
 @dataclasses.dataclass
@@ -91,6 +97,8 @@ def resize_and_copy_if_new(src_album_folder: str, src_dst_folder: SrcDstFolder):
     for src_photo in src_photos:
         dst_photo = get_dst_photo_filename(src_photo, src_dst_folder)
         if file_has_to_be_resized(src_photo, dst_photo):
+            logger.info("Src: " + src_photo)
+            logger.info("Dst: " + dst_photo)
             resize_info_single_item = ResizeInfo(src_photo, dst_photo)
             files_to_resize.append(resize_info_single_item)
     return files_to_resize
@@ -105,4 +113,5 @@ def compare_and_resize(src_dst_folder):
     src_album_folders = get_all_folders(src_dst_folder.src)
 
     for folder in src_album_folders:
+        logger.info(folder)
         resize_and_copy_if_new(folder, src_dst_folder)
