@@ -8,7 +8,7 @@ import resize_new.compare_and_resize
 
 
 def create_temporary_file(tmp_path, filename):
-    os.mkdir(tmp_path)
+    os.makedirs(tmp_path, exist_ok=True)
     target_output = os.path.join(tmp_path, filename)
     with open(target_output, "w+"):
         pass
@@ -168,6 +168,17 @@ def test___file_has_to_be_resized___dst_newer___no_resize(tmp_path):
     assert not has_to_be_resized
 
 
-# def test___check_compare_and_resize___with_default_structure___expect_no_error(test_folder):
-#     src_dst_folder = resize_new.compare_and_resize.SrcDstFolder(test_folder.input, test_folder.output)
-#     resize_new.compare_and_resize.compare_and_resize(src_dst_folder)
+def test___resize_and_copy_if_new___example_folder___correct_files(tmp_path):
+    src_photo1 = create_temporary_file(os.path.join(tmp_path, "src"), "test1.jpg")
+    src_photo2 = create_temporary_file(os.path.join(tmp_path, "src"), "test2.jpg")
+    src_album_folder = os.path.split(src_photo1)[0]
+    src_dst_folder = resize_new.compare_and_resize.SrcDstFolder(src_album_folder, r"c:/dst/")
+
+    files_to_resize = resize_new.compare_and_resize.resize_and_copy_if_new(
+        src_album_folder, src_dst_folder
+    )
+
+    assert files_to_resize[0].src.replace("/", "\\") == src_photo1
+    assert files_to_resize[1].src.replace("/", "\\") == src_photo2
+    assert files_to_resize[0].dst == src_dst_folder.dst + "/" + "test1.jpg"
+    assert files_to_resize[1].dst == src_dst_folder.dst + "/" + "test2.jpg"
