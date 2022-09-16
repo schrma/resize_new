@@ -58,7 +58,6 @@ def remove_jpg_folder_for_dst(src_album_folder):
 def dst_photo_is_older(src_photo, dst_photo):
     if os.path.exists(dst_photo):
         dst_older_than_src_in_seconds = os.stat(src_photo).st_mtime - os.stat(dst_photo).st_mtime
-        print(dst_older_than_src_in_seconds)
         if dst_older_than_src_in_seconds > 0:
             return True
     return False
@@ -114,7 +113,6 @@ def resize_photo(src_photo, dst_photo, max_target=1920):
 
     with pyexiv2.Image(src_photo) as img:
         metadata_exif = img.read_exif()
-        # metadata_xmp = img.read_xmp()
     try:
         check_if_file_was_loaded(image)
     except FileNotFoundError as exception:
@@ -126,6 +124,12 @@ def resize_photo(src_photo, dst_photo, max_target=1920):
 
     # dsize
     dsize = (width_target, height_target)
+
+    metadata_exif['Exif.Photo.PixelXDimension'] = width_target
+    metadata_exif['Exif.Photo.PixelYDimension'] = height_target
+    metadata_exif['Exif.Image.ImageWidth'] = width_target
+    metadata_exif['Exif.Image.ImageLength'] = height_target
+    # metadata_exif['Exif.Image.ImageDescription'] = "gut"
 
     # resize image
     output = cv2.resize(image, dsize)

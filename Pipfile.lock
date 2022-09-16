@@ -1,7 +1,7 @@
 {
     "_meta": {
         "hash": {
-            "sha256": "6ad4de3c6e4cd4d0854dc0095fa38a0458ef92ea162f88928baaf3680cf53f4b"
+            "sha256": "27872cae77b662fe04662c730ce23eb3e700bf66269ae4abb8f9ccf29da04064"
         },
         "pipfile-spec": 6,
         "requires": {
@@ -84,6 +84,30 @@
                 "sha256:9ff82852bcb65d139813e2a5197627a94966245c897796760a3a2a8eb66f020b"
             ],
             "version": "==1.19.0"
+        },
+        "pyexiv2": {
+            "hashes": [
+                "sha256:05b51c60d4636dffe82aced2950ef62fa6ce45b857d50c9d419fb408e67b33de",
+                "sha256:09dd035e800bb068b4c23f505ebc868b5b55a20d3d1347523336fb88c547297e",
+                "sha256:2fd0e1626c96c1d0302b76d79d9ff3a3a631131a67685799c6781d9cbb10ae0f",
+                "sha256:3031ea4f12981fccfad4cee275c7fc18df664c75bee6bfca2f15d5b8ed477c9d",
+                "sha256:3a7136dcce7faf650134194a6189b7ad522ec1e8f16cdb035924f5e85e019e18",
+                "sha256:3fb040c4487d92369a02f53039affbdb7699864ffc68aaa2a79d22c47575832e",
+                "sha256:63fd49ea4ba94201b122741707e05de506104afe71e3283d297e42d55e483a31",
+                "sha256:6877bb1e48f804079f4b5b994163e46e66fc6ce5827fd06710fd80d952e5de87",
+                "sha256:6e8930c5acfb45f3da355e1b27855123c5c943f2b795c8410b47a8fe3f947496",
+                "sha256:7796ee9cf46abd707bfa31f948d71e2e02db67b01f7705861afaccc701972818",
+                "sha256:840bf48fe7114533ee9782296dd81817b6ffb96e2043392dc13319d196478178",
+                "sha256:aa3c7accfdbc0e7128f54b71eed9c108925b1feef41d8c089a813fdffcdedf8d",
+                "sha256:c19a1a06e1c4b4235b2a4750dddbc8e8a55dd3ada366974d5c0525b2d6493e5c",
+                "sha256:daa1f1ff0daa04b79f7f4853ea5055e012528da922496efcd912898e954c5905",
+                "sha256:dc5b7fa958aa890ffd6b1281ea200997a80aaafc057435decfb6fb7ace1217c9",
+                "sha256:ec03102b313f1a9e1a2c0d2745518d4e693d3811f8295b3dccd5950820e4c724",
+                "sha256:f0a60742ba8789d9580d5a2600de72d7f23ac3cde7cf04b8b10aefab8d1e5bd6",
+                "sha256:faac1de8ecacfd4a820bf0b518c7923cc1be537295f945d66e556e3dcfa11791"
+            ],
+            "index": "pypi",
+            "version": "==2.8.0"
         },
         "swissarmyknife": {
             "hashes": [

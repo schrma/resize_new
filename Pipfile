@@ -7,6 +7,7 @@ name = "pypi"
 opencv-contrib-python = "*"
 swissarmyknife = "*"
 loguru = "*"
+pyexiv2 = "*"
 
 [dev-packages]
 black = "*"
