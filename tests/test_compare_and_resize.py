@@ -1,5 +1,6 @@
 import os
 import time
+import shutil
 
 import pytest
 
@@ -216,3 +217,20 @@ def test___compare_and_resize___input_folder___golden_run(test_folder):
         test_folder.input, test_folder.output
     )
     resize_new.compare_and_resize.compare_and_resize(src_dst_folder)
+
+
+def test___read_write_metadata___sample_image___correction_metadata(test_folder):
+    filename = os.path.join(test_folder.input, "2021/2021_02/foto2_1.JPG")
+    output_filename = os.path.join(test_folder.output, "meta_file.jpg")
+    output_filename = r"D:\20-skills\owncloud-wolke\50-Fotos\test\meta_file.JPG"
+    shutil.copy(filename, output_filename)
+
+    metadata_input = resize_new.compare_and_resize.read_metadata(filename)
+
+    metadata_input['Exif.Image.ImageDescription'] = "muy"
+
+    resize_new.compare_and_resize.write_metadata(output_filename, metadata_input)
+
+    metadata_output = resize_new.compare_and_resize.read_metadata(output_filename)
+
+    assert metadata_input == metadata_output

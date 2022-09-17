@@ -1,6 +1,7 @@
 import dataclasses
 import os
 import sys
+import shutil
 
 import cv2
 import pyexiv2
@@ -108,11 +109,42 @@ def check_if_file_was_loaded(image):
         raise FileNotFoundError from exception
 
 
-def resize_photo(src_photo, dst_photo, max_target=1920):
-    image = cv2.imread(src_photo, cv2.IMREAD_UNCHANGED)
-
-    with pyexiv2.Image(src_photo) as img:
+def read_metadata(filename):
+    with pyexiv2.Image(filename) as img:
         metadata_exif = img.read_exif()
+        metadata_xmp = img.read_xmp()
+    return metadata_exif, metadata_xmp
+
+
+def write_metadata(filename, metadata_exif, metadata_xmp):
+    with pyexiv2.Image(filename) as img:
+        img.modify_exif(metadata_exif)
+        for item in metadata_xmp.items():
+            try:
+                img.modify_xmp({item[0] : item[1] })
+            except:
+                pass
+
+def write_xmp(filename, metadata):
+    with pyexiv2.Image(filename) as img:
+        for item in metadata:
+            img.modify_xmp(item)
+
+
+def shorten_xmp(metadata_xmp, caption):
+    metadata = dict()
+    try:
+        metadata['Xmp.exif.UserComment'] = caption
+        metadata['Xmp.tiff.ImageDescription'] = caption
+    except:
+        pass
+    return metadata
+
+def resize_photo(src_photo, dst_photo, max_target=1920):
+    shutil.copy(src_photo, dst_photo)
+    image = cv2.imread(dst_photo, cv2.IMREAD_UNCHANGED)
+
+    metadata, metadata_xmp = read_metadata(dst_photo)
     try:
         check_if_file_was_loaded(image)
     except FileNotFoundError as exception:
@@ -125,12 +157,17 @@ def resize_photo(src_photo, dst_photo, max_target=1920):
     # dsize
     dsize = (width_target, height_target)
 
-    metadata_exif['Exif.Photo.PixelXDimension'] = width_target
-    metadata_exif['Exif.Photo.PixelYDimension'] = height_target
-    metadata_exif['Exif.Image.ImageWidth'] = width_target
-    metadata_exif['Exif.Image.ImageLength'] = height_target
-    # metadata_exif['Exif.Image.ImageDescription'] = "gut"
+    metadata['Exif.Photo.PixelXDimension'] = width_target
+    metadata['Exif.Photo.PixelYDimension'] = height_target
+    metadata['Exif.Image.ImageWidth'] = width_target
+    metadata['Exif.Image.ImageLength'] = height_target
 
+    caption = ''
+    for my_item in metadata_xmp['Xmp.dc.subject']:
+        caption = caption + my_item+ ","
+
+    metadata['Exif.Image.ImageDescription'] = caption
+    metadata[]
     # resize image
     output = cv2.resize(image, dsize)
 
@@ -138,9 +175,7 @@ def resize_photo(src_photo, dst_photo, max_target=1920):
 
     cv2.imwrite(dst_photo, output)
 
-    with pyexiv2.Image(dst_photo) as img:
-        img.modify_exif(metadata_exif)
-
+    write_metadata(dst_photo, metadata, metadata_xmp)
 
 def calculate_target_size(width_org, height_org, max_target=1920):
     if width_org > height_org:
